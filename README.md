@@ -24,8 +24,9 @@ transfer-data                  transfer data from sqlite
 make start-all
 ```
 
-Выполнятся следующие команды `start-db wait_to_db transfer-data django-migrate admin start-app`
+Выполнятся следующие команды `install-pip start-db wait_to_db transfer-data django-migrate admin start-app`
 
+- Будут установлены зависимости
 - Запустится контейнер с базой данных
 - Скрипт ожидание запуска БД, иначе данные не перенесутся и миграции не применятся
 - Будет осуществлен перенос данных из sqlite

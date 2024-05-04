@@ -44,7 +44,12 @@ stop-db-clear: ## stop postgres and clear all
 transfer-data: ## transfer data from sqlite
 	cd 03_sqlite_to_postgres && python load_data.py
 
+.PHONY: wait_to_db
 wait_to_db:
 	bash -c "until docker exec theatre-db pg_isready ; do echo 'db is starting...' ; sleep 1 ; echo 'db is up' ; done"
 
-start-all: start-db wait_to_db transfer-data django-migrate admin start-app
+.PHONY: install-pip
+install-pip: ## install requirements
+	pip install -r requirements.txt
+
+start-all: install-pip start-db wait_to_db transfer-data django-migrate admin start-app
