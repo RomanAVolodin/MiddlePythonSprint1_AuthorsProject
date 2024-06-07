@@ -121,6 +121,7 @@ class Roles(models.TextChoices):
     DIRECTOR = 'director', _('director')
     PRODUCER = 'producer', _('producer')
 
+
 class PersonFilmWork(UUIDMixin):
     person = models.ForeignKey(
         'Person', on_delete=models.CASCADE, verbose_name=_('person'),
