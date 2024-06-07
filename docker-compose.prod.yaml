@@ -1,8 +1,6 @@
 services:
   gateway:
-    build:
-      context: docker/nginx
-      dockerfile: Dockerfile
+    image: rozarioagro/swarm-gateway:1.1
     container_name: theatre-gateway
     restart: always
     volumes:
@@ -13,9 +11,7 @@ services:
       - api
 
   api:
-    build:
-      context: .
-      dockerfile: docker/api/Dockerfile
+    image: rozarioagro/swarm-django:1.1
     container_name: theatre-api
     restart: always
     volumes:

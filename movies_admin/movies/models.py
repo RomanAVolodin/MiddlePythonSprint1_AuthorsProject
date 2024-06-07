@@ -29,7 +29,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
         return self.name
 
     class Meta:
-        db_table = 'content\".\"genre'
+        db_table = 'content"."genre'
         verbose_name = _('genre')
         verbose_name_plural = _('genres')
         ordering = ('name',)
@@ -42,7 +42,7 @@ class Person(UUIDMixin, TimeStampedMixin):
         return self.full_name
 
     class Meta:
-        db_table = 'content\".\"person'
+        db_table = 'content"."person'
         verbose_name = _('person')
         verbose_name_plural = _('persons')
 
@@ -62,7 +62,8 @@ class FilmWork(UUIDMixin, TimeStampedMixin):
         validators=[
             MinValueValidator(1.0),
             MaxValueValidator(10.0),
-        ])
+        ],
+    )
     type = models.CharField(
         _('type'),
         max_length=7,
@@ -73,14 +74,14 @@ class FilmWork(UUIDMixin, TimeStampedMixin):
         Genre,
         through='GenreFilmWork',
         verbose_name=_('genres'),
-        )
+    )
     persons = models.ManyToManyField(Person, through='PersonFilmWork')
 
     def __str__(self):
         return self.title
 
     class Meta:
-        db_table = 'content\".\"film_work'
+        db_table = 'content"."film_work'
         verbose_name = _('film')
         verbose_name_plural = _('films')
         ordering = ['-creation_date']
@@ -97,7 +98,7 @@ class GenreFilmWork(UUIDMixin):
         'Genre',
         on_delete=models.CASCADE,
         verbose_name=_('genre'),
-        )
+    )
     film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -105,7 +106,7 @@ class GenreFilmWork(UUIDMixin):
         return self.genre.name
 
     class Meta:
-        db_table = 'content\".\"genre_film_work'
+        db_table = 'content"."genre_film_work'
         verbose_name = _('genre')
         verbose_name_plural = _('film genres')
         constraints = [
@@ -119,13 +120,15 @@ class GenreFilmWork(UUIDMixin):
 class Roles(models.TextChoices):
     ACTOR = 'actor', _('actor')
     DIRECTOR = 'director', _('director')
-    PRODUCER = 'producer', _('producer')
+    WRITER = 'writer', _('writer')
 
 
 class PersonFilmWork(UUIDMixin):
     person = models.ForeignKey(
-        'Person', on_delete=models.CASCADE, verbose_name=_('person'),
-        )
+        'Person',
+        on_delete=models.CASCADE,
+        verbose_name=_('person'),
+    )
     film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
     role = models.CharField(
         _('role'),
@@ -139,7 +142,7 @@ class PersonFilmWork(UUIDMixin):
         return self.person.full_name
 
     class Meta:
-        db_table = 'content\".\"person_film_work'
+        db_table = 'content"."person_film_work'
         verbose_name = _('person')
         verbose_name_plural = _('film persons')
         constraints = [
