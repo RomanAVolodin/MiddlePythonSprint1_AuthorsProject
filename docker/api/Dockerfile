@@ -18,6 +18,6 @@ RUN pip install -r ./requirements.txt
 
 COPY ./docker/api/entrypoint.sh /root/entrypoint.sh
 
-COPY . .
+COPY movies_admin/ .
 
 ENTRYPOINT ["/root/entrypoint.sh"]

@@ -1,6 +1,8 @@
 services:
   gateway:
-    image: rozarioagro/swarm-gateway:1.1
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
     container_name: theatre-gateway
     restart: always
     volumes:
@@ -11,7 +13,9 @@ services:
       - api
 
   api:
-    image: rozarioagro/swarm-django:1.1
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
     container_name: theatre-api
     restart: always
     volumes:
@@ -29,6 +33,7 @@ services:
     restart: always
     volumes:
       - content_db:/var/lib/postgresql/data/
+      - ./database_dump.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - ./.env
     healthcheck:

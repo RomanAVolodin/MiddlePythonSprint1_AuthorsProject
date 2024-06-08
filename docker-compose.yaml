@@ -1,8 +1,6 @@
 services:
   gateway:
-    build:
-      context: docker/nginx
-      dockerfile: Dockerfile
+    image: rozarioagro/swarm-gateway:1.1
     container_name: theatre-gateway
     restart: always
     volumes:
@@ -13,19 +11,13 @@ services:
       - api
 
   api:
-    build:
-      context: .
-      dockerfile: docker/api/Dockerfile
+    image: rozarioagro/swarm-django:1.1
     container_name: theatre-api
     restart: always
     volumes:
-      - ./movies_admin:/code
       - static_volume:/code/static
     env_file:
       - ./.env
-    depends_on:
-      theatre-db:
-        condition: service_healthy
 
   theatre-db:
     image: postgres:14
@@ -33,6 +25,7 @@ services:
     restart: always
     volumes:
       - content_db:/var/lib/postgresql/data/
+      - ./database_dump.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - ./.env
     healthcheck:
