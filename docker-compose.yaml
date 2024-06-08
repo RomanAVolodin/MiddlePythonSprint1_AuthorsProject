@@ -1,17 +1,43 @@
-version: "3.9"
-
 services:
+  gateway:
+    image: rozarioagro/swarm-gateway:1.1
+    container_name: theatre-gateway
+    restart: always
+    volumes:
+      - static_volume:/code/static:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+  api:
+    image: rozarioagro/swarm-django:1.1
+    container_name: theatre-api
+    restart: always
+    volumes:
+      - static_volume:/code/static
+    env_file:
+      - ./.env
+
   theatre-db:
     image: postgres:14
     container_name: theatre-db
     restart: always
     volumes:
       - content_db:/var/lib/postgresql/data/
-      - ./01_schema_design/movies_database.ddl:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
+      - ./database_dump.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - ./.env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'",
+        ]
+      interval: 30s
+      timeout: 30s
+      retries: 3
 
 volumes:
   content_db:
+  static_volume:
