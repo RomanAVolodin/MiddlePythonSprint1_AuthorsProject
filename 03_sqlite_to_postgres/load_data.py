@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from contextlib import contextmanager
+from contextlib import closing
 
 import psycopg
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ from models import FilmWork, Genre, GenreFilmWork, Person, PersonFilmWork
 
 load_dotenv()
 
-dsl = {
+DSL = {
     'dbname': os.getenv('POSTGRES_DB'),
     'user': os.getenv('POSTGRES_USER'),
     'password': os.getenv('POSTGRES_PASSWORD'),
@@ -21,27 +21,20 @@ dsl = {
     'port': os.getenv('SQL_PORT'),
 }
 
-
-@contextmanager
-def sql_conn_context():
-    conn = sqlite3.connect('db.sqlite')
-    yield conn
-    conn.close()
+TABLES = {
+    FilmWork: 'film_work',
+    Person: 'person',
+    Genre: 'genre',
+    PersonFilmWork: 'person_film_work',
+    GenreFilmWork: 'genre_film_work',
+}
 
 
 def load_from_sqlite(connection: sqlite3.Connection, conn: _connection) -> None:
     sqlite_loader = SQLiteLoader(connection)
     postgres_saver = PostgresSaver(conn)
 
-    tables = {
-        FilmWork: 'film_work',
-        Person: 'person',
-        Genre: 'genre',
-        PersonFilmWork: 'person_film_work',
-        GenreFilmWork: 'genre_film_work',
-    }
-
-    for klass, table in tables.items():
+    for klass, table in TABLES.items():
         sqlite_data = sqlite_loader.load_data(table)
         for batch in sqlite_data:
             data_to_load = [klass.get_values(item) for item in batch]
@@ -56,5 +49,9 @@ def load_from_sqlite(connection: sqlite3.Connection, conn: _connection) -> None:
 
 
 if __name__ == '__main__':
-    with sql_conn_context() as sqlite_conn, psycopg.connect(**dsl, row_factory=dict_row) as pg_conn:
+    with closing(sqlite3.connect('db.sqlite')) as sqlite_conn, closing(
+        psycopg.connect(**DSL, row_factory=dict_row)
+    ) as pg_conn:
         load_from_sqlite(sqlite_conn, pg_conn)
+
+    print('🎉 Все данные перенесены 👍')

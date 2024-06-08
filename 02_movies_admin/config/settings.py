@@ -119,8 +119,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOCALE_PATHS = ['movies/locale']
 
 CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "unique-snowflake",
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
     }
 }

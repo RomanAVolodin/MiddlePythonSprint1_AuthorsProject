@@ -10,8 +10,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
@@ -23,8 +22,26 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=255, verbose_name='title')),
                 ('description', models.TextField(blank=True, verbose_name='description')),
                 ('creation_date', models.DateField(blank=True, verbose_name='creation date')),
-                ('rating', models.FloatField(blank=True, validators=[django.core.validators.MinValueValidator(1.0), django.core.validators.MaxValueValidator(10.0)], verbose_name='rating')),
-                ('type', models.CharField(choices=[('movie', 'movie'), ('tv show', 'tv show')], default='movie', max_length=7, verbose_name='type')),
+                (
+                    'rating',
+                    models.FloatField(
+                        blank=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(1.0),
+                            django.core.validators.MaxValueValidator(10.0),
+                        ],
+                        verbose_name='rating',
+                    ),
+                ),
+                (
+                    'type',
+                    models.CharField(
+                        choices=[('movie', 'movie'), ('tv show', 'tv show')],
+                        default='movie',
+                        max_length=7,
+                        verbose_name='type',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'film',
@@ -69,7 +86,12 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('film_work', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.filmwork')),
-                ('genre', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.genre', verbose_name='genre')),
+                (
+                    'genre',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='movies.genre', verbose_name='genre'
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'genre',
@@ -86,10 +108,23 @@ class Migration(migrations.Migration):
             name='PersonFilmWork',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('role', models.CharField(choices=[('actor', 'actor'), ('director', 'director'), ('producer', 'producer')], default='actor', max_length=10, verbose_name='role')),
+                (
+                    'role',
+                    models.CharField(
+                        choices=[('actor', 'actor'), ('director', 'director'), ('producer', 'producer')],
+                        default='actor',
+                        max_length=10,
+                        verbose_name='role',
+                    ),
+                ),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('film_work', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.filmwork')),
-                ('person', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.person', verbose_name='person')),
+                (
+                    'person',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='movies.person', verbose_name='person'
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'person',
@@ -108,7 +143,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='personfilmwork',
-            constraint=models.UniqueConstraint(fields=('film_work', 'person', 'role'), name='film_work_person_role_idx'),
+            constraint=models.UniqueConstraint(
+                fields=('film_work', 'person', 'role'), name='film_work_person_role_idx'
+            ),
         ),
         migrations.AddIndex(
             model_name='filmwork',
